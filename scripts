@@ -1,0 +1,108 @@
+ON $*:TEXT:/^[!.]set-event/Si:#: { if ($nick isop #tugas_revolution) { 
+	set %event $2
+    set %dia $3
+    set %meet $4
+    set %mass $5
+    set %world $6
+    set %infos $7-
+    set %falhado $nick
+    msg #tugas_revolution [Evento Adicionado] (!event) para mais detalhes.
+    notice $nick Evento adicionado com sucesso. 
+  }
+  else { notice $nick Acesso Negado. Só a Hierarquia tem acesso a adicionar Eventos.  }
+}
+
+ON $*:TEXT:/^[!.]set-ts/Si:#: { if ($nick isop #tugas_revolution) { 
+    set %serv $2
+    set %chan $3
+    set %pass $4
+    msg #tugas_revolution [TeamSpeak Actualizado] (!ts) para mais detalhes.
+    notice $nick TeamSpeak actualizado com sucesso. 
+  }
+  else { notice $nick Acesso Negado. Só a Hierarquia tem acesso a modificar a TeamSpeak info. } 
+}
+
+
+ON $*:TEXT:/^[@!.]event$/Si:#: { if ($nick isvoice #tugas_revolution || $nick ishop #tugas_revolution || $nick isop #tugas_revolution || $nick == Sael) {
+    notice $nick $c1([) $+ $c2(EVENT) $+ $c1(]) $c2($replace(%event,$chr(95),$chr(32))) $c1(DIA:) $c2(%dia) $c1(||) $c1(MEET:) $c2($replace(%meet,$chr(95),$chr(32))) $c1(||) $c1(MASS:) $c2(%mass) $c1(||) $c1(WORLD:) $c2(%world)
+    notice $nick $c1([) $+ $c2(INFOS) $+ $c1(]) $c2(%infos)
+  }
+  else { notice $nick Access Denied. Only TR Members have the access to the clan's Event. }
+}
+
+ON $*:TEXT:/^[@!.]ts$/Si:#: { if ($nick isvoice #tugas_revolution || $nick ishop #tugas_revolution || $nick isop #tugas_revolution || $nick == Sael) { 
+    notice $nick $c1([) $+ $c2(TS3) $+ $c1(]) $c2(%serv) $c1($chr(124) $+ $chr(124)) $c1(SALA:) $c2($replace(%chan,$chr(95),$chr(32))) $c1($chr(124) $+ $chr(124)) $c1(PASS:) $c2(%pass) 
+  }
+  else { notice $nick Access Denied. Only TR Members have the access to the TeamSpeak info. } 
+}
+
+on $*:text:we:#:{ if ($nick ison #trstaff) { notice $nick The Event was set by: %falhado } }
+
+
+
+
+
+ON $*:TEXT:/^[!.]notice-mass/Si:#trstaff: { if ($nick isop #tugas_revolution) { notice $nick MASS Notice Activado.
+  timerMASS 6 2 /notice +#tugas_revolution $c1([) $+ $c2($replace(%event,$chr(95),$chr(32))) $+ $c1(]) $c1(W) $+ $c2(%world) $c2($replace(%meet,$chr(95),$chr(32))) $c1(AGORA!!) $c1($chr(149)) $c1((!ts) e (!event) para mais info.) }
+  else { notice $nick Access Denied. Só a Hierarquia têm acesso a usar os auto-notices. }
+}
+
+ON $*:TEXT:/^[!.]notice-topic/Si:#trstaff: { if ($nick isop #tugas_revolution) { notice $nick TOPIC Notice Activado. 
+  timerTOPIC 5 6 /notice +#tugas_revolution $c1([) $+ $c2($replace(%event,$chr(95),$chr(32))) $+ $c1(]) $c2(%infos) }
+  else { notice $nick Access Denied. Só a Hierarquia têm acesso a usar os auto-notices. }
+}
+
+ON $*:TEXT:/^[!.]notice-active/Si:#trstaff: { if ($nick isop #tugas_revolution) { notice $nick Active Notice Activado.
+  timerACTIVE 4 5 /notice +#tugas_revolution $c1(Sê activo no Fórum, posta nos tópicos activos: http://tinyurl.com/topicosactivos) }
+  else { notice $nick Access Denied. Só a Hierarquia têm acesso a usar os auto-notices. }
+}
+
+ON $*:TEXT:/^[!.]halt/Si:#trstaff: { if ($nick isop #tugas_revolution) { notice $nick Timers Desactivados.
+    timerMASS 0 0 echo timerMASS disabled
+    timerTOPIC 0 0 echo timerMASS disabled
+    timerACTIVE 0 0 echo timerMASS disabled
+  }
+  else { notice $nick Access Denied. Só a Hierarquia têm acesso a usar os auto-notices. }
+}
+
+on $*:TEXT:/^[@!.]count$/Si:*: { if ($nick ison #tugas_revolution || $nick == Sael) { 
+    notice $nick $c1(There are  $+ $nick($chan,0) $+  users in $chan $+ .) $c1($nick($chan,0,o)) 4OP $c1($chr(124)) $c1($nick($chan,0,h)) 7halfOP $c1($chr(124)) $c1($nick($chan,0,v)) 2Voice $c1($chr(124)) $c1($nick($chan,0,r)) 1Regular 
+  }
+}
+
+
+
+on $*:text:+m:#:{ if ($nick isop $chan || $nick == Sael) { mode $chan +m  } }
+on $*:text:-m:#:{ if ($nick isop $chan || $nick == Sael) { mode $chan -m  } }
+on $*:text:+i:#:{ if ($nick isop $chan || $nick == Sael) { mode $chan +i  } }
+on $*:text:-i:#:{ if ($nick isop $chan || $nick == Sael) { mode $chan -i  } }
+
+on $*:text:!k *:#:{ if ($nick == Sael) { cs kick $chan $2 } }
+on $*:text:!kb *:#:{ if ($nick == Sael) { cs ban $chan $2 } }
+
+
+on $*:text:ml *:#:{ if ($nick ison #tugas_revolution) { notice $nick http://www.runehead.com/clans/ml.php?clan= $+ $2 } }
+on $*:text:ms *:#:{ if ($nick ison #tugas_revolution) { notice $nick http://s1.zetaboards.com/Tugas_Revolution/members/?search_type=contains&name= $+ $2 } }
+on $*:text:ge *:#:{ if ($nick ison #tugas_revolution) { notice $nick http://services.runescape.com/m=itemdb_rs/results.ws?query= $+ $replace($2-,$chr(32),$chr(43)) } }
+on $*:text:rs *:#:{ if ($nick ison #tugas_revolution) { notice $nick http://www.runescape.com/kbase/search.ws?keywords_chk=1&body_chk=1&title_chk=1&description_chk=1&search_query= $+ $replace($2-,$chr(32),$chr(43)) } }
+on $*:text:fs *:#:{ if ($nick ison #tugas_revolution) { notice $nick http://s1.zetaboards.com/Tugas_Revolution/search/?c=1&q= $+ $2 $+ &type=post&sort=desc&forum[]=-1&s_m=11&s_d=1&s_y=2009&e_m=7&e_d=4&e_y=2010 } }
+on $*:text:rw *:#:{ if ($nick ison #tugas_revolution) { notice $nick http://runescape.wikia.com/wiki/Special:Search?search= $+ $replace($2-,$chr(32),$chr(43)) } }
+
+on $*:text:fo:#:{ if ($nick ison #trstaff) { 
+    notice $nick $c2([Actividade]) $c1(http://s1.zetaboards.com/Tugas_Revolution/topic/3080153/1/)
+    notice $nick $c2([Evento Trip]) $c1(http://s1.zetaboards.com/Tugas_Revolution/topic/3015698/1/)
+    notice $nick $c2([Evento Wars]) $c1(http://s1.zetaboards.com/Tugas_Revolution/topic/2760292/1/)
+  } 
+}
+
+on $*:TEXT:/^[@!.]hl$/Si:#trstaff: { if ($nick isop #tugas_revolution) {
+    var %x 1
+    while (%x <= $nick(#tugas_revolution,0)) {
+      if ($nick(#tugas_revolution,%x) != $me) { 
+      var %masshl_nicks %masshl_nicks $nick(#tugas_revolution,%x,v) }
+      inc %x
+    }
+    msg #tugas_revolution $replace(%masshl_nicks,$chr(32),$chr(44))
+  }
+  else { $nick $nick #nick HL'ed. }
+}
